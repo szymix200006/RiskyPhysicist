@@ -1,6 +1,7 @@
-import { Injectable, Signal, signal } from '@angular/core';
+import { inject, Injectable, Signal, signal } from '@angular/core';
 import { GameModes } from '../interfaces/game-modes';
 import { Settings } from '../interfaces/settings';
+import { GameService } from './game.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,10 @@ import { Settings } from '../interfaces/settings';
 export class SettingsService {
   private playersCount = signal<number>(2);
   private gameMode = signal<GameModes>(GameModes.EASY);
-  private readonly maxPlayers = 8;
+
+  private readonly maxPlayers = 4;
   private readonly minPlayers = 2;
-  private readonly rounds = 10;
+  private readonly rounds = 5;
   private readonly startingBalance = 1000;
   private readonly stakes = [2,3,4,5];
 

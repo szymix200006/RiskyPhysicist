@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input, OnDestroy, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TimerComponent } from "../timer/timer.component";
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-answer-modal',
@@ -19,9 +20,11 @@ import { TimerComponent } from "../timer/timer.component";
   `,
   styleUrl: './answer-modal.component.css'
 })
-export class AnswerModalComponent {
+export class AnswerModalComponent implements OnDestroy{
   @Input() currentPlayerName!: string;
-  readonly answerDuration = 15000;
+  @Input() answerDuration!: number;
+  game = inject(GameService);
+  answerSent = signal<boolean>(false);
   
   answerForm = new FormGroup({
     answer: new FormControl<number | null>(null, [Validators.required])
@@ -31,8 +34,17 @@ export class AnswerModalComponent {
     if(this.answerForm.valid) {
       const answer = this.answerForm.value.answer;
       if(answer) {
-
+        this.game.addAnswer(answer);
+        this.answerSent.set(true);
+        this.game.closeModule();
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    if(!this.answerSent()) {
+      const answer = this.answerForm.valid && this.answerForm.value.answer ? this.answerForm.value.answer : 0;
+      this.game.addAnswer(answer);
+    }  
   }
 }

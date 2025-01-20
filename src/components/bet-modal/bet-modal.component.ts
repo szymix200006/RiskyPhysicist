@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { Player } from '../../interfaces/player';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-bet-modal',
@@ -22,6 +23,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class BetModalComponent implements OnInit{
   @Input() currentPlayer!: Player;
   maxBet!: number;
+  game = inject(GameService);
 
   ngOnInit():void {
     this.maxBet = this.currentPlayer.balance;
@@ -39,7 +41,8 @@ export class BetModalComponent implements OnInit{
     if(this.betForm.valid) {
       const bet = this.betForm.value.bet;
       if(bet) {
-        console.log(bet);
+        this.game.setPlayerBet(this.currentPlayer.id, bet);
+        this.game.closeModule();
       }
     }
   }

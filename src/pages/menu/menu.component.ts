@@ -4,6 +4,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import { GameModes } from '../../interfaces/game-modes';
 import { Router } from '@angular/router';
 import { QuestionModalComponent } from "../../components/question-modal/question-modal.component";
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-menu',
@@ -47,6 +48,7 @@ import { QuestionModalComponent } from "../../components/question-modal/question
 })
 export class MenuComponent {
   private readonly settingsService = inject(SettingsService);
+  private readonly game = inject(GameService);
   private readonly router = inject(Router);
   gameModes = Object.values(GameModes);
   maxPlayers = this.settingsService.getMaxPlayers();

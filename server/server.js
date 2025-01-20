@@ -1,10 +1,13 @@
 const express = require('express');
 const mariadb = require('mariadb');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-const poll = mariadb.createPoll({
+app.use(cors())
+
+const poll = mariadb.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
@@ -34,9 +37,10 @@ app.get('/:level', async (req, res) => {
 
     try {
         const questions = await getQuestions(level);
-        res.json({level, questions})
+        return res.json({level, questions});
+        console.log(res)
     } catch(error) {
-        res.status(500).send({error: 'Database error', details: error.message})
+        return res.status(500).send({error: 'Database error', details: error.message})
     }
 });
 
