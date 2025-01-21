@@ -13,7 +13,7 @@ import { GameService } from '../../services/game.service';
         <input type="number" class="w-full h-full text-center focus:outline-none text-4xl font-extrabold" formControlName="answer">
       </section>
       <section class="w-1/3 h-fit">
-        <app-timer [duration]="answerDuration"/>
+        <app-timer [duration]="duration"/>
       </section>
       <button type="submit" class="text-3xl text-white bg-sky-500 rounded-md px-10 py-5 hover:scale-110 duration-300 ease-in-out">Submit answer</button>
     </form>
@@ -22,7 +22,7 @@ import { GameService } from '../../services/game.service';
 })
 export class AnswerModalComponent implements OnDestroy{
   @Input() currentPlayerName!: string;
-  @Input() answerDuration!: number;
+  @Input() duration!: number;
   game = inject(GameService);
   answerSent = signal<boolean>(false);
   

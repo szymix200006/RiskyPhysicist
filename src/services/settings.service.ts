@@ -1,7 +1,6 @@
-import { inject, Injectable, Signal, signal } from '@angular/core';
+import { Injectable, Signal, signal } from '@angular/core';
 import { GameModes } from '../interfaces/game-modes';
 import { Settings } from '../interfaces/settings';
-import { GameService } from './game.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,7 @@ export class SettingsService {
 
   private readonly maxPlayers = 4;
   private readonly minPlayers = 2;
-  private readonly rounds = 5;
+  private readonly rounds = 10;
   private readonly startingBalance = 1000;
   private readonly stakes = [2,3,4,5];
 
@@ -29,11 +28,7 @@ export class SettingsService {
   }
 
   private setGameMode(mode: GameModes): void {
-    //if(Object.values(GameModes).includes(value)) {
-      this.gameMode.set(mode);
-    // } else {
-    //   throw new Error("Game mode must be one of these enum values: easy, medium, hard or legendary!");
-    // }
+    this.gameMode.set(mode);
   }
 
   getGameMode(): Signal<GameModes> {

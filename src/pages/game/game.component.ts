@@ -6,14 +6,15 @@ import { BetModalComponent } from "../../components/bet-modal/bet-modal.componen
 import { ScoreModalComponent } from "../../components/score-modal/score-modal.component";
 import { GameService } from '../../services/game.service';
 import { CommonModule } from '@angular/common';
+import { LoadingModalComponent } from "../../components/loading-modal/loading-modal.component";
 
 @Component({
   selector: 'app-game',
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingModalComponent],
   template: `
     <main class="w-screen h-screen bg-emerald-600 flex flex-row items-center justify-evenly">
       @for(stake of stakes; track stake; let i = $index) {
-        <button [disabled]="!sortedAnswers()[i]" class="h-4/5 w-1/5 border-8 bg-transparent rounded-3xl border-white hover:scale-110 duration-500 ease-in-out text-3xl text-white font-extrabold p-4 flex flex-col items-center justify-end box-border" (click)="onBetClick(stake, sortedAnswers()[i])">
+        <button [disabled]="sortedAnswers()[i] === undefined" class="h-4/5 w-1/5 border-8 bg-transparent rounded-3xl border-white hover:scale-110 duration-500 ease-in-out text-3xl text-white font-extrabold p-4 flex flex-col items-center justify-end box-border" (click)="onBetClick(stake, sortedAnswers()[i])">
           @if(sortedAnswers()[i] !== undefined) {
             <span class="py-10 px-5 border-2 rounded-md bg-white text-black text-bold w-2/3 border-sky-500 m-auto">{{sortedAnswers()[i]}}</span>
           }
@@ -24,6 +25,12 @@ import { CommonModule } from '@angular/common';
       <div [className]="modalPlaceHolderStyle()">
         <ng-container #appModalPlaceHolder></ng-container>
       </div>
+
+      @if(game.getIsLoading()()) {
+        <div class="z-10 absolute w-screen h-screen">
+          <app-loading-modal/>
+        </div>
+      }
     </main>
   `,
 })
@@ -33,9 +40,9 @@ export class GameComponent implements OnInit {
   stakes = this.settings.getStakes();
   isPortalVisible = this.game.getIsPortalVisible();
   answers = this.game.getAnswers();
-  sortedAnswers = computed(() => this.answers().sort((answer1, answer2) => answer2 - answer1));
+  sortedAnswers = computed(() => [...new Set(this.answers().sort((answer1, answer2) => answer1 - answer2))]);
   modalPlaceHolderStyle = computed(() => {
-    if(this.isPortalVisible()) return 'z-10 absolute w-full h-full p-auto';
+    if(this.isPortalVisible()) return 'z-10 absolute w-screen h-screen';
     else return '';
   });
 

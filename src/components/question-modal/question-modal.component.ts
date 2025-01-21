@@ -11,7 +11,7 @@ import { TimerComponent } from "../timer/timer.component";
         <h1 class="text-3xl font-extrabold">Questrion nr.{{question.id}}</h1>
         <p class="text-center text-2xl">{{question.content}}</p>
         <div class="w-full h-fit">
-          <app-timer [duration]="questionTime"/>
+          <app-timer [duration]="duration"/>
         </div>
       </section>
     </main>
@@ -20,5 +20,5 @@ import { TimerComponent } from "../timer/timer.component";
 })
 export class QuestionModalComponent {
   @Input() question!: Question;
-  @Input() questionTime!: number;
+  @Input() duration!: number;
 }

@@ -11,6 +11,8 @@ import { InfoModalComponent } from '../components/info-modal/info-modal.componen
 import { BetModalComponent } from '../components/bet-modal/bet-modal.component';
 import { ScoreModalComponent } from '../components/score-modal/score-modal.component';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { LoadingModalComponent } from '../components/loading-modal/loading-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -18,20 +20,27 @@ import { Router } from '@angular/router';
 export class GameService{
   private players = signal<Player[]>([]);
   private sortedPlayers = computed(() => this.players().sort((player1, player2) => player2.balance - player1.balance));
+
   private questions: Question[] = [];
   private questionsService = inject(QuestionsService);
+  private answers = signal<number[]>([]);
+
   private settings = inject(SettingsService);
+  private gameSubscription!: Subscription;
+  private isLoading = signal<boolean>(false);
+
   private modal = inject(ModalService);
   private isPortalVisible = signal<boolean>(true);
+
   private currentRoundAnswers: number[] = [];
   private currentView: ViewContainerRef | null = null;
   private currentTimeOut: ReturnType<typeof setTimeout> | null = null;
-  private resolveFn!: () => void;
-  private answers = signal<number[]>([]);
-  private resolveBet!: () => void;
   private currentPlayerId!: number;
   private currentQuestion!: Question;
   private currentGoal!: number;
+  private resolveFn!: () => void;
+  private resolveBet!: () => void;
+ 
   private router = inject(Router);
 
   private generatePlayers(): Player[] {
@@ -59,9 +68,11 @@ export class GameService{
   }
      
   initializeGame(viewContainerRef: ViewContainerRef) {
+    this.isLoading.set(true);
     this.players.set(this.generatePlayers());
-    this.questionsService.getQuestions(this.settings.getGameMode()()).subscribe({
+    this.gameSubscription = this.questionsService.getQuestions(this.settings.getGameMode()()).subscribe({
       next: response => {
+        this.isLoading.set(false);
         this.questions = this.generateQuestions(response);
         this.startGameLoop(viewContainerRef);
       },
@@ -69,6 +80,10 @@ export class GameService{
         throw new Error("Failed to load questions");
       }
     });
+  }
+
+  getIsLoading(): Signal<boolean> {
+    return this.isLoading.asReadonly();
   }
   
   getPlayers(): Signal<Player[]> {
@@ -168,7 +183,7 @@ export class GameService{
     const correctAnswer = this.getClosestAnswer();
     const currentPlayers = this.players();
     const newPlayers = currentPlayers.map(player => {
-      let balance = player.currentAnswer === correctAnswer ? player.balance + (player.currentBet * player.currentMultiplier) : player.balance - player.currentBet;
+      let balance = player.currentAnswer === correctAnswer ? (player.balance-player.currentBet) + (player.currentBet * player.currentMultiplier) : player.balance - player.currentBet;
       if(balance === 0) balance += 100;
       return {...player, balance};
     })
@@ -181,10 +196,10 @@ export class GameService{
 
   async startGameLoop(viewContainerRef: ViewContainerRef) {
     for(let round = 0; round < this.settings.getRounds(); round++) {
-      await this.showModule(QuestionModalComponent, viewContainerRef, [{ name: 'question', value: this.getQuestion() }, { name: 'questionTime', value: 10000 }], 10000);
+      await this.showModule(QuestionModalComponent, viewContainerRef, [{ name: 'question', value: this.getQuestion() }, { name: 'duration', value: 10000 }], 10000);
       for(let playerIndex = 0; playerIndex < this.settings.getPlayersCount()(); playerIndex++) {
         this.isPortalVisible.set(true)
-        await this.showModule(AnswerModalComponent, viewContainerRef, [{ name: 'currentPlayerName', value: this.getPlayers()()[playerIndex].name }, { name: 'answerDuration', value: 15000 }], 15000);
+        await this.showModule(AnswerModalComponent, viewContainerRef, [{ name: 'currentPlayerName', value: this.getPlayers()()[playerIndex].name }, { name: 'duration', value: 15000 }], 15000);
       }
       this.setAnswers();
       await this.showModule(InfoModalComponent, viewContainerRef, []);
@@ -195,8 +210,10 @@ export class GameService{
       }
       this.setScores();
       if(round < this.settings.getRounds() - 1) await this.showModule(ScoreModalComponent, viewContainerRef, [{name: 'answer', value: this.getClosestAnswer()}, {name: 'duration', value: 15000}], 15000);
+      else await this.showModule(ScoreModalComponent, viewContainerRef, [{name: 'answer', value: this.getClosestAnswer()}, {name: 'duration', value: 15000}, {name: 'scores', value: false}], 15000);
       this.resetAnswers();
     }
+    this.gameSubscription.unsubscribe();
     this.router.navigate(['/ending']);
   }
 

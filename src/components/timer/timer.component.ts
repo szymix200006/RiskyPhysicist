@@ -4,11 +4,11 @@ import { Component, Input, OnInit, signal } from '@angular/core';
   selector: 'app-timer',
   imports: [],
   template: `
-   <div class="w-full h-7 border-2 border-white rounded-full bg-black">
+   <div class="w-full h-7 border-2 border-white rounded-full bg-black overflow-hidden">
       <div 
         class="bg-sky-500 h-full rounded-full"
         [style.width.%]="progress()"
-        [style.transition]="'width 0.1s lineral'"
+        [style.transition]="'width 0.1s linear'"
       >
     </div>
    </div>
@@ -18,7 +18,6 @@ import { Component, Input, OnInit, signal } from '@angular/core';
 export class TimerComponent implements OnInit{
   @Input() duration!: number;
   progress = signal<number>(100);
-  display = signal<string>('block');
 
   ngOnInit(): void {
     this.startProgress();
