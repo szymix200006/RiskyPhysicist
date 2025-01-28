@@ -14,33 +14,33 @@ import { GameService } from '../../services/game.service';
       <form [formGroup]="settingsForm" (submit)="submitSettingsForm()" class="flex flex-col items-center justify-between h-1/3">
         <section>
           <div class="flex flex-row text-5xl text-white flex items-center justify-between gap-10">
-            <label for="playersCount" class="font-bold">Players </label>
+            <label for="playersCount" class="font-bold select-none">Players </label>
             <div class="grid grid-cols-3 grid-rows-1 place-items-center cursor-pointer">
               @if(playersCount!.value! > this.minPlayers) {
-                <span class="material-symbols-outlined text-4xl font-extrabold" (click)="updatePlayersCount(-1)">chevron_left</span> 
+                <span class="material-symbols-outlined text-4xl font-extrabold select-none" (click)="updatePlayersCount(-1)">chevron_left</span> 
               }
-              <input type="number" id="playersCount" formControlName="playersCount" [min]="this.minPlayers" [max]="this.maxPlayers" size="1" class="text-center bg-transparent col-start-2 animate-pulse">
+              <input type="number" id="playersCount" formControlName="playersCount" [min]="this.minPlayers" [max]="this.maxPlayers" size="1" class="text-center select-none bg-transparent col-start-2 animate-pulse">
               @if(playersCount!.value! < this.maxPlayers) {
-                <span class="material-symbols-outlined text-4xl font-extrabold" (click)="updatePlayersCount(1)">chevron_right</span>
+                <span class="material-symbols-outlined text-4xl font-extrabold select-none" (click)="updatePlayersCount(1)">chevron_right</span>
               }
             </div>
           </div>
         </section>
         <section>
           <div class="flex flex-row text-5xl text-white flex items-center justify-center gap-2">
-            <label for="gameMode" class="font-bold">Game mode </label>
+            <label for="gameMode" class="font-bold select-none">Game mode </label>
             <div class="grid grid-cols-3 grid-rows-1 place-items-center cursor-pointer w-2/5">
               @if(gameMode!.value! !== gameModes[0]) {
-                <span class="material-symbols-outlined text-4xl font-extrabold" (click)="updateGameMode(-1)">chevron_left</span> 
+                <span class="material-symbols-outlined text-4xl font-extrabold select-none" (click)="updateGameMode(-1)">chevron_left</span> 
               }
-              <input type="text" id="gameMode" formControlName="gameMode" [value]="this.gameMode" size="11" class="text-center bg-transparent col-start-2 animate-pulse">
+              <input type="text" id="gameMode" formControlName="gameMode" [value]="this.gameMode" size="11" class="text-center bg-transparent col-start-2 animate-pulse select-none">
               @if(gameMode!.value! !== gameModes[gameModes.length - 1]) {
-                <span class="material-symbols-outlined text-4xl font-extrabold" (click)="updateGameMode(1)">chevron_right</span>
+                <span class="material-symbols-outlined text-4xl font-extrabold select-none" (click)="updateGameMode(1)">chevron_right</span>
               }
             </div>
           </div>
         </section>
-        <button type="submit"  class="text-3xl text-white bg-sky-500 rounded-md px-10 py-5 hover:scale-110 duration-300 ease-in-out">Let's Play</button>
+        <button type="submit"  class="select-none text-3xl text-white bg-sky-500 rounded-md px-10 py-5 hover:scale-110 duration-300 ease-in-out">Let's Play</button>
       </form>
     </main>
   `,
