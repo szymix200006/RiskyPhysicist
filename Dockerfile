@@ -1,8 +1,8 @@
-FROM node:18-alpine as build
+FROM node:alpine AS build
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json package-lock.json ./
 
 RUN npm install
 
@@ -10,10 +10,18 @@ RUN npm install -g @angular/cli
 
 COPY . .
 
-RUN ng build --configuration=production
+RUN npm run build  
 
-FROM nginx:latest
+FROM node:alpine
 
-COPY --from=build app/dist/aftas-angular /usr/share/nginx/html
+WORKDIR /app
 
-EXPOSE 80
+COPY --from=build /app/dist ./dist
+
+COPY package*.json ./
+
+RUN npm install --production
+
+EXPOSE 4000
+
+CMD ["npm", "run", "serve:ssr:ryzyk-fizyk"]
