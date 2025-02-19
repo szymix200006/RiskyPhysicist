@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
   template: `
     <main class="flex flex-col items-center justify-evenly w-full h-screen bg-amber-300 transform-none">
-      <h1 class="text-8xl text-white font-extrabold z-10">Risky Physicist!</h1>
+      <h1 class="text-8xl text-white font-extrabold z-10">Risky Physicist</h1>
       <a routerLink="/menu" class="transition ease-in-out duration-300 hover:scale-110 z-10">
         <button class="px-10 bg-sky-500 w-fit text-white rounded-md flex items-center">
           <span class="material-symbols-outlined text-7xl">play_arrow</span>
