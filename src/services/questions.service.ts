@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class QuestionsService {
-  private readonly QUESTRIONS_URI = 'https://risky-physicist-backend-production.up.railway.app/easy';
+  private readonly QUESTRIONS_URI = 'https://risky-physicist-backend-production.up.railway.app/';
   private http = inject(HttpClient);
 
   getQuestions(level: GameModes): Observable<QuestionResponse> {
