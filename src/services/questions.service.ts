@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { GameModes } from '../interfaces/game-modes';
 import { QuestionResponse } from '../interfaces/question-response';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,9 @@ export class QuestionsService {
   private http = inject(HttpClient);
 
   getQuestions(level: GameModes): Observable<QuestionResponse> {
+    if(typeof window === 'undefined') {
+      return of({level: level, questions: []})
+    }
     return this.http.get<QuestionResponse>(`${this.QUESTRIONS_URI}${level}`);
   }
 
