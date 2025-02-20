@@ -1,4 +1,4 @@
-import { Component, computed, Inject, inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, computed, Inject, inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { QuestionModalComponent } from "../../components/question-modal/question-modal.component";
 import { AnswerModalComponent } from "../../components/answer-modal/answer-modal.component";
@@ -34,7 +34,7 @@ import { LoadingModalComponent } from "../../components/loading-modal/loading-mo
     </main>
   `,
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements AfterViewInit {
   settings = inject(SettingsService);
   game = inject(GameService);
   stakes = this.settings.getStakes();
@@ -49,7 +49,7 @@ export class GameComponent implements OnInit {
   @ViewChild('appModalPlaceHolder', {read: ViewContainerRef, static: true}) modalContainer!: ViewContainerRef;
   @Inject(PLATFORM_ID) private platformId: any;
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if(isPlatformBrowser(this.platformId)){
       this.game.initializeGame(this.modalContainer);
     } else {
