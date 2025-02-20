@@ -1,11 +1,11 @@
-import { Component, computed, inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, computed, Inject, inject, OnInit, PLATFORM_ID, ViewChild, ViewContainerRef } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { QuestionModalComponent } from "../../components/question-modal/question-modal.component";
 import { AnswerModalComponent } from "../../components/answer-modal/answer-modal.component";
 import { BetModalComponent } from "../../components/bet-modal/bet-modal.component";
 import { ScoreModalComponent } from "../../components/score-modal/score-modal.component";
 import { GameService } from '../../services/game.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LoadingModalComponent } from "../../components/loading-modal/loading-modal.component";
 
 @Component({
@@ -47,9 +47,13 @@ export class GameComponent implements OnInit {
   });
 
   @ViewChild('appModalPlaceHolder', {read: ViewContainerRef, static: true}) modalContainer!: ViewContainerRef;
+  @Inject(PLATFORM_ID) private platformId: any;
 
   ngOnInit(): void {
-    this.game.initializeGame(this.modalContainer);
+    if(isPlatformBrowser(this.platformId)){
+      this.game.initializeGame(this.modalContainer);
+    }
+    
   }
 
   onBetClick(stake: number, answer: number): void {
