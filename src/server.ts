@@ -1,65 +1,25 @@
-import {
-  AngularNodeAppEngine,
-  createNodeRequestHandler,
-  isMainModule,
-  writeResponseToNodeResponse,
-} from '@angular/ssr/node';
-import express from 'express';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { AngularAppEngine, createRequestHandler } from '@angular/ssr';
+import { getContext } from '@netlify/angular-runtime/context';
 
-const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-const browserDistFolder = resolve(serverDistFolder, '../browser');
-
-const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularAppEngine = new AngularAppEngine();
 
 /**
- * ✅ Serve static files (for performance)
+ * ✅ Netlify-compatible request handler for SSR
  */
-app.use(
-  express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: false,
-    redirect: false,
-  })
-);
+export async function netlifyAppEngineHandler(request: Request): Promise<Response> {
+  const context = getContext();
 
-/**
- * 🚀 **Skip SSR for `/game` to prevent Netlify timeout**
- */
-app.get('/game', (req, res) => {
-  res.sendFile(resolve(browserDistFolder, 'index.html'));
-});
-
-/**
- * ✅ Handle other requests with SSR
- */
-app.use('/*', async (req, res, next) => {
   try {
-    const response = await angularApp.handle(req);
-    if (response) {
-      writeResponseToNodeResponse(response, res);
-    } else {
-      next();
-    }
+    // Handle the request using Angular SSR
+    const result = await angularAppEngine.handle(request, context);
+    return result || new Response('Not found', { status: 404 });
   } catch (error) {
     console.error('SSR Error:', error);
-    next(error);
+    return new Response('Internal Server Error', { status: 500 });
   }
-});
-
-/**
- * ✅ Start Express server
- */
-if (isMainModule(import.meta.url)) {
-  const port = process.env["PORT"] || 4000;
-  app.listen(port, () => {
-    console.log(`✅ Server running at http://localhost:${port}`);
-  });
 }
 
 /**
  * ✅ Export request handler for Netlify
  */
-export const reqHandler = createNodeRequestHandler(app);
+export const handler = createRequestHandler(netlifyAppEngineHandler);
