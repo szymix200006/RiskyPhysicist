@@ -10,6 +10,12 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
+        "prerender": {
+          "builder": "@angular-devkit/build-angular:prerender",
+          "options": {
+            "routes": ["/home", "/menu", "/ending"]
+          }
+        },
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
