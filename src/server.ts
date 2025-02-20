@@ -40,6 +40,11 @@ app.use(
 /**
  * Handle all other requests by rendering the Angular application.
  */
+
+app.use('/game', (req, res) => {
+  res.sendFile(resolve(browserDistFolder, 'index.html'));
+});
+
 app.use('/**', (req, res, next) => {
   angularApp
     .handle(req)
