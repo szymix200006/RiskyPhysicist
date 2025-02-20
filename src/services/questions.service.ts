@@ -12,9 +12,6 @@ export class QuestionsService {
   private http = inject(HttpClient);
 
   getQuestions(level: GameModes): Observable<QuestionResponse> {
-    if(typeof window === 'undefined') {
-      return of({level: level, questions: []})
-    }
     return this.http.get<QuestionResponse>(`${this.QUESTRIONS_URI}${level}`);
   }
 
