@@ -52,6 +52,8 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     if(isPlatformBrowser(this.platformId)){
       this.game.initializeGame(this.modalContainer);
+    } else {
+      console.log('not in browser')
     }
     
   }
