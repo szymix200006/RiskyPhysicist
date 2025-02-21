@@ -50,11 +50,9 @@ export class GameComponent implements OnInit {
   @Inject(PLATFORM_ID) private platformId: any;
 
   ngOnInit(): void {
-    if(isPlatformBrowser(this.platformId)){
+    
       this.game.initializeGame(this.modalContainer);
-    } else {
-      console.log('not in browser')
-    }
+
     
   }
 
